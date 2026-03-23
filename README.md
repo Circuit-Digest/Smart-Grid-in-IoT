@@ -1,12 +1,13 @@
 ⚡ SMART GRID MONITORING SYSTEM USING IoT
+---
 🚀 PROJECT OVERVIEW
-
+---
 This project demonstrates a Smart Grid Monitoring System using an Arduino UNO R4 WiFi and the PZEM-004T Energy Meter.
 
 It measures electrical parameters in real time and displays them locally on an OLED display while also sending data to ThingSpeak cloud for remote monitoring.
 
 🎯 FEATURES
-
+---
 • Real-time electrical parameter monitoring
 • Cloud logging using ThingSpeak
 • OLED display for live readings
@@ -15,8 +16,9 @@ It measures electrical parameters in real time and displays them locally on an O
 • Push-button controlled display
 
 🛠️ COMPONENTS REQUIRED
+---
 S.No | Component | Quantity | Purpose
-
+---
 1 | Arduino UNO R4 WiFi | 1 | Main controller
 2 | PZEM-004T Energy Meter | 1 | Measures parameters
 3 | Current Transformer (CT) | 1 | Current sensing
@@ -28,6 +30,7 @@ S.No | Component | Quantity | Purpose
 9 | AC Load | 1 | Testing
 
 ⚙️ WORKING PRINCIPLE
+---
 PZEM-004T measures voltage and current
 It calculates power, energy, frequency, and power factor
 Arduino reads data using UART (Modbus RTU)
@@ -35,13 +38,15 @@ Data is:
 Displayed on OLED
 Sent to ThingSpeak cloud
 Process repeats continuously
-📡 SYSTEM FLOW
 
+📡 SYSTEM FLOW
+---
 AC Supply → PZEM → Arduino → OLED
 ↓
 ThingSpeak Cloud
 
 🌐 THINGSPEAK SETUP
+---
 Create ThingSpeak account
 Create a new channel
 Add fields:
@@ -53,7 +58,9 @@ Frequency
 Power Factor
 Copy Channel ID & API Key
 Paste into code
+
 💻 IMPORTANT CODE SNIPPETS
+---
 
 Include Libraries:
 #include <WiFiS3.h>
@@ -72,6 +79,7 @@ Upload:
 ThingSpeak.setField(1, voltage);
 
 📊 PARAMETERS MEASURED
+---
 
 • Voltage (V)
 • Current (mA)
@@ -81,20 +89,20 @@ ThingSpeak.setField(1, voltage);
 • Power Factor
 
 🖥️ OUTPUT
-
+---
 • OLED Display → Live data
 • Serial Monitor → Debug
 • ThingSpeak → Graphs
 
 📡 APPLICATIONS
-
+---
 • Smart energy monitoring
 • Home power management
 • Industrial load monitoring
 • Electrical labs
 
 🔧 TROUBLESHOOTING
-
+---
 Problem: No readings
 Solution: Check TX/RX wiring
 
@@ -107,7 +115,7 @@ Solution: Check I2C address
 Problem: WiFi not connecting
 Solution: Check credentials
 
-🔮 FUTURE ENHANCEMENTS
+🔮 ---FUTURE ENHANCEMENTS
 
 • SD card logging
 • SMS alerts
