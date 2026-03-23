@@ -1,159 +1,126 @@
-# Smart-Grid-in-IoT
+Smart Grid Monitoring System Using IoT
+🚀 Project Overview
 
-A smart grid is not a complicated buzzword. It simply means electrical infrastructure is monitored continuously, data is collected in real time, and decisions are made based on measured values instead of guesswork.
-This project builds a practical IoT smart energy monitoring node using an Arduino UNO R4 WiFi and the PZEM-004T energy meter. It reads electrical parameters, displays them locally on an OLED screen, and uploads data to ThingSpeak for remote monitoring and historical analysis.
+This project demonstrates a Smart Grid Monitoring System that measures and monitors electrical parameters in real time using an Arduino UNO R4 WiFi and PZEM-004T Energy Meter.
 
-💡 The system behaves like a small smart grid endpoint — not just a standalone meter.
-
+The system continuously tracks voltage, current, power, energy, frequency, and power factor, and sends the data to the cloud using ThingSpeak. It also displays real-time values locally on an OLED display, making it a complete IoT-based energy monitoring solution.
 
 🎯 Features
 
-✅ Measures Voltage, Current, Power, Energy, Frequency, and Power Factor in real time
-✅ Displays live readings on a local 128×64 OLED screen
-✅ Streams data to ThingSpeak cloud for remote logging and graph visualization
-✅ Non-blocking firmware — sensing, display, and WiFi run simultaneously using millis()
-✅ Rolling display mode — press a button to cycle through each parameter individually
-✅ 3D printed enclosure for a clean, professional, and safe physical build
-✅ WiFi auto-reconnect with state machine handling
-✅ Clean Modbus RTU communication via the PZEM004Tv40_R4 library
+✔ Real-time electrical parameter monitoring
+✔ Cloud data logging using ThingSpeak
+✔ OLED display for live readings
+✔ WiFi-enabled remote monitoring
+✔ Non-blocking code for smooth operation
+✔ Rolling display using push button
+✔ Accurate measurement using PZEM module
 
-
-🧰 Hardware Components
-ComponentQuantityNotesArduino UNO R4 WiFi1Main controller — built-in WiFi + hardware Serial1 for ModbusPZEM-004T Energy Meter1Measures all 6 AC electrical parameters via Modbus RTUCurrent Transformer Coil1Included with PZEM — clamps around live wire for safe current sensingOLED Display (128×64)1I2C display, address 0x3CPush Button1Toggles rolling display modeBreadboard / PCB1For assembly and prototypingJumper WiresSeveralMale-to-male and male-to-femaleUSB Cable1Programming and powering the ArduinoAC Load1Test load to verify measurements
-
-
-📐 Electrical Parameters Monitored
-ParameterUnitDescription⚡ VoltageVRMS AC mains voltage — deviation causes device failure or motor overheating🔌 CurrentmARMS load current — primary cause of overheating and fire risk when excessive💡 PowerWReal power (useful work) — what appears on your electricity bill🔋 EnergykWhAccumulated power over time — total electricity consumed📡 FrequencyHzGrid stability indicator — deviation signals system stress or imbalance📊 Power Factor—Efficiency ratio — poor PF results in wasted capacity and higher losses
-
-📦 Required Libraries
-Install all via the Arduino Library Manager:
-LibraryPurposePZEM004Tv40_R4Modbus RTU communication with PZEM-004T (optimized for UNO R4 WiFi)Adafruit_SSD1306OLED display driverAdafruit_GFXGraphics primitives for the OLEDThingSpeakCloud data upload and channel managementWiFiS3WiFi connectivity for Arduino UNO R4 WiFi
-
-⚠️ Important: Use PZEM004Tv40_R4 specifically — it communicates directly through Serial1 and avoids timing issues found in generic PZEM implementations.
-
-
-☁️ ThingSpeak Cloud Setup
-
-Create a free account at thingspeak.com and log in
-Click New Channel and enable 6 fields, naming them clearly:
-
-Field 1 → Voltage
-Field 2 → Current
-Field 3 → Power
-Field 4 → Energy
-Field 5 → Frequency
-Field 6 → Power Factor
-
-
-Open the API Keys tab — copy your Channel ID and Write API Key
-Paste both values into the firmware (see Configuration below)
-Upload firmware — ThingSpeak auto-generates graphs and your dashboard goes live
-
-
-⚙️ Configuration
-Before uploading, update these values in the sketch:
-cpp// ── WiFi Credentials ──────────────────────────────────────
-const char* ssid     = "YOUR_WIFI_SSID";
-const char* password = "YOUR_WIFI_PASSWORD";
-
-// ── ThingSpeak Settings ───────────────────────────────────
-unsigned long myChannelNumber = YOUR_CHANNEL_ID;
-const char*   myWriteAPIKey   = "YOUR_WRITE_API_KEY";
-
-🔐 Security: Never commit real credentials to a public repo. Use a secrets.h file and add it to .gitignore.
-
-
-🔌 Wiring Guide
-FromToPZEM-004T TXArduino RX1 (Serial1)PZEM-004T RXArduino TX1 (Serial1)PZEM-004T GNDArduino GNDOLED SDAArduino SDA (A4)OLED SCLArduino SCL (A5)OLED VCCArduino 3.3VPush ButtonArduino D4 (internal pull-up enabled)Current TransformerClamp around live wire ONLY — never both live + neutral
-
-⚠️ Safety Warning: The PZEM-004T connects directly to mains AC voltage. Exercise extreme caution. Consult a qualified electrician before wiring to live mains if unsure.
-
-
-📲 Display Modes
-ModeTriggerDescriptionAll-in-oneDefault (button OFF)All 6 parameters shown simultaneously on one screenRollingPress button (ON)Cycles through each parameter individually every 5 seconds
-
-💻 Source Code — Key Sections Explained
-Object Initialization
-cppPZEM004Tv40_R4 pzem(&Serial1);   // Modbus on hardware serial — isolated from USB debug
-WiFiClient client;                // Manages all network communication
-Non-Blocking Timing
-cppunsigned long lastReadTime = 0;
-const unsigned long readInterval = 1000;   // Read every 1 second
-
-if (currentMillis - lastReadTime >= readInterval) {
-    lastReadTime = currentMillis;
-    readPZEMData();
+🛠️ Components Required
+S.No	Component	Quantity	Purpose
+1	Arduino UNO R4 WiFi	1	Main controller with WiFi
+2	PZEM-004T Energy Meter	1	Measures electrical parameters
+3	Current Transformer (CT)	1	Current sensing
+4	OLED Display (SSD1306)	1	Displays readings
+5	Push Button	1	Controls display mode
+6	Breadboard / PCB	1	Circuit setup
+7	Jumper Wires	As required	Connections
+8	USB Cable	1	Programming & power
+9	AC Load	1	Testing
+⚙️ Working Principle
+PZEM-004T measures voltage and current from the AC line.
+It internally calculates power, energy, frequency, and power factor.
+Arduino reads data using Modbus RTU via UART.
+Data is processed and:
+Displayed on OLED
+Printed on Serial Monitor
+Uploaded to ThingSpeak
+The cycle repeats continuously for real-time monitoring.
+📡 System Flow
+AC Supply → PZEM-004T → Arduino UNO R4 WiFi → OLED Display
+                                      ↓
+                                 ThingSpeak Cloud
+🌐 ThingSpeak Setup
+Create a ThingSpeak account
+Create a new channel
+Add fields:
+Voltage
+Current
+Power
+Energy
+Frequency
+Power Factor
+Copy:
+Channel ID
+Write API Key
+Paste them into the Arduino code
+💻 Important Code Snippets
+Include Required Libraries
+#include <WiFiS3.h>
+#include <ThingSpeak.h>
+#include <PZEM004Tv40_R4.h>
+Initialize PZEM
+PZEM004Tv40_R4 pzem(&Serial1);
+Read Sensor Data
+if (pzem.readAll()) {
+  voltage = pzem.getVoltage();
+  current = pzem.getCurrent();
 }
-
-This prevents delay() from blocking — the processor stays free for display updates and WiFi simultaneously.
-
-Reading All Parameters
-cppif (pzem.readAll()) {
-    voltage     = pzem.getVoltage();
-    current     = pzem.getCurrent() * 1000;   // Convert A → mA
-    power       = pzem.getPower();
-    energy      = pzem.getEnergy();
-    frequency   = pzem.getFrequency();
-    powerFactor = pzem.getPowerFactor();
-    dataValid   = true;
-}
-Uploading to ThingSpeak
-cppThingSpeak.setField(1, voltage);
-ThingSpeak.setField(2, current);
-ThingSpeak.setField(3, power);
-ThingSpeak.setField(4, energy);
-ThingSpeak.setField(5, frequency);
-ThingSpeak.setField(6, powerFactor);
-
-int statusCode = ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
-if (statusCode == 200) {
-    Serial.println("Upload successful!");
-}
-Separated Responsibilities
-cppupdateDisplay();         // Local OLED visualization
-uploadToThingSpeak();    // Cloud logging
-
-Each function is independent — easy to test, debug, and extend individually.
-
-
-🗂️ Project Structure
-smart-grid-iot/
-├── src/
-│   └── smart_grid_monitor.ino       # Main Arduino sketch
-├── docs/
-│   ├── circuit_diagram.png          # Full wiring schematic
-│   ├── hardware_setup.jpg           # Physical assembly photo
-│   └── thingspeak_dashboard.png     # Cloud dashboard screenshot
-├── enclosure/
-│   └── enclosure_model.stl          # 3D printable enclosure (PETG recommended)
-└── README.md
-
+Upload to ThingSpeak
+ThingSpeak.setField(1, voltage);
+ThingSpeak.writeFields(channelNumber, apiKey);
+📊 Parameters Measured
+Voltage (V)
+Current (mA)
+Power (W)
+Energy (kWh)
+Frequency (Hz)
+Power Factor
+🖥️ Output
+OLED Display → Real-time values
+Serial Monitor → Debug data
+ThingSpeak Dashboard → Graphs and history
+📡 Applications
+Smart Energy Monitoring
+Home Power Management
+Industrial Load Monitoring
+Electrical Lab Analysis
+Preventive Maintenance Systems
 🔧 Troubleshooting
-IssueSymptomFixNo readings from meterNo response / blank valuesCheck TX↔RX wiring; verify Serial1; confirm shared GNDCommunication failureError code 1 (CRC mismatch)Shorten wires; tighten connections; route away from mainsCurrent always 0 AShows 0 mA constantlyClamp CT around one live wire only — not both conductorsOLED blank screenNothing displayedVerify SDA/SCL; confirm I2C address is 0x3CRandom resetsBoard restarts unexpectedlyUse stable 5V adapter; avoid USB power when load is active
+No Data from PZEM
+Check TX/RX connections
+Ensure common ground
+Verify Serial1 usage
+Constant Zero Current
+Clamp CT only on live wire
+Do not clamp both wires
+OLED Not Working
+Check I2C address (0x3C)
+Verify SDA and SCL connections
+WiFi Not Connecting
+Check SSID and password
+Ensure proper signal strength
+Random Reset
+Use stable power supply
+Avoid powering from weak USB
+🔮 Future Enhancements
+Add SD card for offline logging
+Multi-meter monitoring system
+SMS/email alert system
+Mobile app integration
+Advanced energy analytics
+📚 Learning Outcomes
 
-🚀 Future Enhancements
+After completing this project, you will understand:
 
- SD card logging for offline data storage when WiFi is unavailable
- Multi-circuit monitoring using additional PZEM-004T modules
- Local web dashboard served over LAN (no internet required)
- Over-current and over-voltage real-time alerts
- Mobile push notifications for abnormal readings
- Daily and weekly energy usage analytics and PDF reports
+IoT-based energy monitoring
+Modbus RTU communication
+PZEM-004T working
+OLED interfacing with Arduino
+WiFi and cloud integration
+Real-time data handling
+📌 Conclusion
 
+This project provides a simple, reliable, and scalable smart grid monitoring solution using IoT. It combines real-time sensing, local display, and cloud logging, making it ideal for both learning and practical applications in energy management.
 
-📚 Related Projects
-
-🔗 IoT Electricity Energy Meter using ESP12 & Arduino
-🔗 IoT Smart Energy Meter with SMS Alert
-🔗 Real-Time Energy Monitoring Device using ESP32
-🔗 Precision Digital Micro Current Meter
-🔗 Mobile-Operated Home Automation with Energy Meter (NodeMCU)
-
-
-📄 License
-This project is open source. Feel free to use, modify, and distribute with proper attribution.
-
-<div align="center">
-Built with ❤️ using Arduino UNO R4 WiFi + PZEM-004T + ThingSpeak
-⭐ Star this repo if it helped you  |  🐛 Open an issue for bugs  |  🔀 Pull requests welcome
-</div>
+Author :
+Vedhathiri K
